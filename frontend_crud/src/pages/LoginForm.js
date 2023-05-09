@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import http from '../http';
 
 export function LoginForm() {
+  const navigate  = useNavigate();
+  
   const styleCard = {
     margin: '100px',
   };
@@ -15,6 +18,40 @@ export function LoginForm() {
     marginTop:"10px",
     marginBottom:"10px",
   };
+
+  const submitForm = (inputs) => {
+    http.post('auth/login', inputs)
+      .then((res) => {
+        const token = res.data.access_token;
+        let accesstoken = '';
+        Object.entries(token).forEach(([key, value]) => {
+          accesstoken +=`${value}`;
+        });
+          localStorage.setItem('accesstoken', accesstoken)
+          // localStorage.getItem('itemName')
+          const logintoken = localStorage.getItem('accesstoken');
+          <Fragment>
+          {logintoken !== ""?navigate('/home')
+          :navigate('/')
+      }
+    </Fragment>
+        navigate('/home');
+      })
+      .catch((error) => {
+        if (error.response) {
+          const errors = error.response.data;
+        let errorMessages = '';
+        Object.entries(errors).forEach(([key, value]) => {
+          errorMessages += `${key}: ${value}\n`;
+        });
+alert(errorMessages);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+      });
+  }
   return (
     <div className="container">
       <div className="card" style={styleCard}>
@@ -23,11 +60,12 @@ export function LoginForm() {
           initialValues={{ email: '', password: ''}}
           validationSchema={Yup.object().shape({
             email: Yup.string().email('Invalid email').required('Email is required'),
-            password: Yup.string().required('Password is required'),
+            password: Yup.string().required('Password is required').min(6, 'Must be 6 digits or more'),
           })}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
+              // alert(JSON.stringify(values, null, 2));
+              submitForm(JSON.stringify(values, null, 2));
               setSubmitting(false);
             }, 400);
           }}

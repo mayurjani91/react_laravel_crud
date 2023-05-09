@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Route, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 import http from "../http";
 
 export function Create() {
@@ -14,7 +14,7 @@ export function Create() {
 
     const submitForm = () => {
         http.post('/users', inputs).then((res) => {
-            navigate('/');
+            navigate('/home');
         })
     }
 
@@ -23,12 +23,12 @@ export function Create() {
             <h4>New users</h4>
             <div className="row">
                 <div className="mb-3">
-                    <label htmlFor="exampleInputname1" className="form-label">Name</label>
-                    <input type="name" className="form-control" id="exampleInputname1" name="name" aria-describedby="nameHelp" value={inputs.name || ""} onChange={handleChange} />
+                    <label className="form-label">Name</label>
+                    <input type="name" className="form-control" name="name" aria-describedby="nameHelp" value={inputs.name || ""} onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" name="email" aria-describedby="emailHelp" value={inputs.email || ""} onChange={handleChange} />
+                    <label  className="form-label">Email address</label>
+                    <input type="email" className="form-control" name="email" aria-describedby="emailHelp" value={inputs.email || ""} onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
